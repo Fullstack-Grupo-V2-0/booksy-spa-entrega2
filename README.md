@@ -1,6 +1,6 @@
 BOOKSY SPA   
 
-prueba 2   
+Son dos Apps:
 
 Booksy SPA      
 /api/v2/   
@@ -11,7 +11,7 @@ MS Usuarios
 
 
 
-Testeos
+Para realizar los testeos, utilizar los siguientes URL y métodos:
 
 --TEST DE AUTENTICACIÓN-- (App principal)
 
