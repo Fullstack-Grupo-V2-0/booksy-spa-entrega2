@@ -61,8 +61,8 @@ POST http://localhost:8081/api/v2/libros
     "isbn": "978-123",
     "titulo": "Mi libro",
     "precio": 9990,
-    "idAutor": 1,
-    "idCategoria": 1
+    "autor": { "idAutor": 1 },
+    "categoria": { "idCategoria": 1 }
 }
 
 Resultado esperado: Deberías recibir el libro creado con su idLibro asignado.
