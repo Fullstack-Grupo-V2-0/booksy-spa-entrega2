@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -39,5 +40,12 @@ public class Usuario {
     @Pattern(regexp = "ADMIN|CLIENTE", message = "El rol debe ser ADMIN o CLIENTE")
     private String rol;
 
-    private Integer activo;
+    private Integer activo = 1;
+
+    @PrePersist
+    public void prePersist() {
+        if (activo == null) {
+            activo = 1;
+        }
+    }
 }
