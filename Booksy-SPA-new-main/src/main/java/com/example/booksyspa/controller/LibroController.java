@@ -1,8 +1,13 @@
 package com.example.booksyspa.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.booksyspa.assemblers.LibroAssembler;
 import com.example.booksyspa.model.Libro;
 import com.example.booksyspa.service.LibroService;
 
@@ -27,51 +33,72 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin("*")
 public class LibroController {
 
-    @Autowired
-    private LibroService libroService;
+    private final LibroService libroService;
+    private final LibroAssembler libroAssembler;
+
+    public LibroController(LibroService libroService, LibroAssembler libroAssembler) {
+        this.libroService = libroService;
+        this.libroAssembler = libroAssembler;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Libro>> getAllLibros() {
-        return ResponseEntity.ok(libroService.getLibros());
+    public CollectionModel<EntityModel<Libro>> getAllLibros() {
+        log.info("GET /api/v2/libros");
+        List<EntityModel<Libro>> libros = libroService.getLibros().stream()
+                .map(libroAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(libros,
+                linkTo(methodOn(LibroController.class).getAllLibros()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Libro> getLibroById(@PathVariable int id) {
-        return ResponseEntity.ok(libroService.getLibroId(id));
+    public EntityModel<Libro> getLibroById(@PathVariable int id) {
+        log.info("GET /api/v2/libros/{}", id);
+        return libroAssembler.toModel(libroService.getLibroId(id));
+    }
+
+    @GetMapping("/isbn/{isbn}")
+    public EntityModel<Libro> getLibroByIsbn(@PathVariable String isbn) {
+        log.info("GET /api/v2/libros/isbn/{}", isbn);
+        return libroAssembler.toModel(libroService.getLibroPorIsbn(isbn));
+    }
+
+    @GetMapping(value = "/categoria/{idCategoria}")
+    public CollectionModel<EntityModel<Libro>> getLibrosByCategoria(@PathVariable int idCategoria) {
+        log.info("GET /api/v2/libros/categoria/{}", idCategoria);
+        List<EntityModel<Libro>> libros = libroService.getLibrosPorCategoria(idCategoria).stream()
+                .map(libroAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(libros,
+                linkTo(methodOn(LibroController.class).getLibrosByCategoria(idCategoria)).withSelfRel());
+    }
+
+    @GetMapping(value = "/autor/{idAutor}")
+    public CollectionModel<EntityModel<Libro>> getLibrosByAutor(@PathVariable int idAutor) {
+        log.info("GET /api/v2/libros/autor/{}", idAutor);
+        List<EntityModel<Libro>> libros = libroService.getLibrosPorAutor(idAutor).stream()
+                .map(libroAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(libros,
+                linkTo(methodOn(LibroController.class).getLibrosByAutor(idAutor)).withSelfRel());
     }
 
     @PostMapping
-    public ResponseEntity<Libro> createLibro(@Valid @RequestBody Libro libro) {
-        Libro nuevoLibro = libroService.saveLibro(libro);
-        return new ResponseEntity<>(nuevoLibro, HttpStatus.CREATED);
+    public ResponseEntity<EntityModel<Libro>> createLibro(@Valid @RequestBody Libro libro) {
+        log.info("POST /api/v2/libros");
+        return new ResponseEntity<>(libroAssembler.toModel(libroService.saveLibro(libro)), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Libro> updateLibro(@PathVariable int id, @Valid @RequestBody Libro libro) {
-        Libro libroActualizado = libroService.updateLibro(id, libro);
-        return ResponseEntity.ok(libroActualizado);
+    public ResponseEntity<EntityModel<Libro>> updateLibro(@PathVariable int id, @Valid @RequestBody Libro libro) {
+        log.info("PUT /api/v2/libros/{}", id);
+        return ResponseEntity.ok(libroAssembler.toModel(libroService.updateLibro(id, libro)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLibro(@PathVariable int id) {
+        log.info("DELETE /api/v2/libros/{}", id);
         libroService.deleteLibro(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<Libro> getLibroByIsbn(@PathVariable String isbn) {
-        return ResponseEntity.ok(libroService.getLibroPorIsbn(isbn));
-    }
-
-    @GetMapping("/categoria/{idCategoria}")
-    public ResponseEntity<List<Libro>> getLibrosByCategoria(@PathVariable int idCategoria) {
-        List<Libro> libros = libroService.getLibrosPorCategoria(idCategoria);
-        return ResponseEntity.ok(libros);
-    }
-
-    @GetMapping("/autor/{idAutor}")
-    public ResponseEntity<List<Libro>> getLibrosByAutor(@PathVariable int idAutor) {
-        List<Libro> libros = libroService.getLibrosPorAutor(idAutor);
-        return ResponseEntity.ok(libros);
     }
 }

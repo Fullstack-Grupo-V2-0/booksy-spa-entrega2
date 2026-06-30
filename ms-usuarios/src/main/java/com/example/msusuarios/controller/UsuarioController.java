@@ -1,8 +1,13 @@
 package com.example.msusuarios.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.msusuarios.assemblers.UsuarioAssemblers;
 import com.example.msusuarios.model.Usuario;
 import com.example.msusuarios.service.UsuarioService;
 
@@ -27,66 +33,52 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin("*")
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
+    private final UsuarioAssemblers assemblers;
+
+    public UsuarioController(UsuarioService usuarioService, UsuarioAssemblers assemblers) {
+        this.usuarioService = usuarioService;
+        this.assemblers = assemblers;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
-
+    public CollectionModel<EntityModel<Usuario>> getAllUsuarios() {
         log.info("GET /api/v1/usuarios");
-
-        return ResponseEntity.ok(usuarioService.getUsuarios());
+        List<EntityModel<Usuario>> usuarios = usuarioService.getUsuarios().stream()
+                .map(assemblers::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(usuarios,
+                linkTo(methodOn(UsuarioController.class).getAllUsuarios()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id) {
-
+    public EntityModel<Usuario> getUsuarioById(@PathVariable int id) {
         log.info("GET /api/v1/usuarios/{}", id);
-
-        return ResponseEntity.ok(usuarioService.getUsuarioById(id));
+        return assemblers.toModel(usuarioService.getUsuarioById(id));
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Usuario> getUsuarioByEmail(
-            @PathVariable String email) {
-
+    public EntityModel<Usuario> getUsuarioByEmail(@PathVariable String email) {
         log.info("GET /api/v1/usuarios/email/{}", email);
-
-        return ResponseEntity.ok(
-                usuarioService.getUsuarioByEmail(email));
+        return assemblers.toModel(usuarioService.getUsuarioByEmail(email));
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> createUsuario(
-            @Valid @RequestBody Usuario usuario) {
-
-        log.info("POST /api/v1/usuarios - email={}",
-                usuario.getEmail());
-
-        Usuario nuevo = usuarioService.saveUsuario(usuario);
-
-        return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
+    public ResponseEntity<EntityModel<Usuario>> createUsuario(@Valid @RequestBody Usuario usuario) {
+        log.info("POST /api/v1/usuarios - email={}", usuario.getEmail());
+        return new ResponseEntity<>(assemblers.toModel(usuarioService.saveUsuario(usuario)), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(
-            @PathVariable int id,
-            @Valid @RequestBody Usuario usuario) {
-
+    public ResponseEntity<EntityModel<Usuario>> updateUsuario(@PathVariable int id, @Valid @RequestBody Usuario usuario) {
         log.info("PUT /api/v1/usuarios/{}", id);
-
-        return ResponseEntity.ok(
-                usuarioService.updateUsuario(id, usuario));
+        return ResponseEntity.ok(assemblers.toModel(usuarioService.updateUsuario(id, usuario)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUsuario(
-            @PathVariable int id) {
-
+    public ResponseEntity<Void> deleteUsuario(@PathVariable int id) {
         log.info("DELETE /api/v1/usuarios/{}", id);
-
         usuarioService.deleteUsuario(id);
-
         return ResponseEntity.noContent().build();
     }
 }

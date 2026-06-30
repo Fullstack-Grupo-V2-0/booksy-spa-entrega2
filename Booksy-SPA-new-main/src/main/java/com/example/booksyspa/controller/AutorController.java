@@ -1,8 +1,13 @@
 package com.example.booksyspa.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.booksyspa.assemblers.AutorAssembler;
 import com.example.booksyspa.model.Autor;
 import com.example.booksyspa.service.AutorService;
 
@@ -27,33 +33,45 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin("*")
 public class AutorController {
 
-    @Autowired
-    private AutorService autorService;
+    private final AutorService autorService;
+    private final AutorAssembler autorAssembler;
+
+    public AutorController(AutorService autorService, AutorAssembler autorAssembler) {
+        this.autorService = autorService;
+        this.autorAssembler = autorAssembler;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Autor>> getAllAutores() {
-        return ResponseEntity.ok(autorService.obtenerAutores());
+    public CollectionModel<EntityModel<Autor>> getAllAutores() {
+        log.info("GET /api/v2/autores");
+        List<EntityModel<Autor>> autores = autorService.obtenerAutores().stream()
+                .map(autorAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(autores,
+                linkTo(methodOn(AutorController.class).getAllAutores()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Autor> getAutorById(@PathVariable int id) {
-        return ResponseEntity.ok(autorService.buscarAutorPorId(id));
+    public EntityModel<Autor> getAutorById(@PathVariable int id) {
+        log.info("GET /api/v2/autores/{}", id);
+        return autorAssembler.toModel(autorService.buscarAutorPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<Autor> createAutor(@Valid @RequestBody Autor autor) {
-        Autor nuevoAutor = autorService.guardar(autor);
-        return new ResponseEntity<>(nuevoAutor, HttpStatus.CREATED);
+    public ResponseEntity<EntityModel<Autor>> createAutor(@Valid @RequestBody Autor autor) {
+        log.info("POST /api/v2/autores");
+        return new ResponseEntity<>(autorAssembler.toModel(autorService.guardar(autor)), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Autor> updateAutor(@PathVariable int id, @Valid @RequestBody Autor autor) {
-        Autor autorActualizado = autorService.actualizar(id, autor);
-        return ResponseEntity.ok(autorActualizado);
+    public ResponseEntity<EntityModel<Autor>> updateAutor(@PathVariable int id, @Valid @RequestBody Autor autor) {
+        log.info("PUT /api/v2/autores/{}", id);
+        return ResponseEntity.ok(autorAssembler.toModel(autorService.actualizar(id, autor)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAutor(@PathVariable int id) {
+        log.info("DELETE /api/v2/autores/{}", id);
         autorService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
