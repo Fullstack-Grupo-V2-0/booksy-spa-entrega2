@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.example.booksyspa.controller.AutorController;
 import com.example.booksyspa.controller.CategoriaController;
-import com.example.booksyspa.controller.LibroController;
 import com.example.booksyspa.controller.PedidoController;
 import com.example.booksyspa.model.Libro;
 
@@ -19,12 +18,6 @@ public class LibroAssembler implements RepresentationModelAssembler<Libro, Entit
 
     @Override
     public EntityModel<Libro> toModel(Libro libro) {
-        Link editarLink = linkTo(methodOn(LibroController.class).updateLibro(libro.getIdLibro(), libro))
-                .withRel("editar");
-
-        Link eliminarLink = linkTo(methodOn(LibroController.class).deleteLibro(libro.getIdLibro()))
-                .withRel("eliminar");
-
         Link autorLink = linkTo(methodOn(AutorController.class).getAutorById(libro.getAutor().getIdAutor()))
                 .withRel("autor-del-libro");
 
@@ -34,6 +27,6 @@ public class LibroAssembler implements RepresentationModelAssembler<Libro, Entit
         Link pedidosLink = linkTo(methodOn(PedidoController.class).getPedidosByLibro(libro.getIdLibro()))
                 .withRel("pedidos-del-libro");
 
-        return EntityModel.of(libro, editarLink, eliminarLink, autorLink, categoriaLink, pedidosLink);
+        return EntityModel.of(libro, autorLink, categoriaLink, pedidosLink);
     }
 }

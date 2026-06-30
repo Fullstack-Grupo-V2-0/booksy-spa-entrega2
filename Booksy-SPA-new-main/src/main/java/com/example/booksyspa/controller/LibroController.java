@@ -1,8 +1,5 @@
 package com.example.booksyspa.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,8 +44,7 @@ public class LibroController {
         List<EntityModel<Libro>> libros = libroService.getLibros().stream()
                 .map(libroAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(libros,
-                linkTo(methodOn(LibroController.class).getAllLibros()).withSelfRel());
+        return CollectionModel.of(libros);
     }
 
     @GetMapping("/{id}")
@@ -69,8 +65,7 @@ public class LibroController {
         List<EntityModel<Libro>> libros = libroService.getLibrosPorCategoria(idCategoria).stream()
                 .map(libroAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(libros,
-                linkTo(methodOn(LibroController.class).getLibrosByCategoria(idCategoria)).withSelfRel());
+        return CollectionModel.of(libros);
     }
 
     @GetMapping(value = "/autor/{idAutor}")
@@ -79,8 +74,7 @@ public class LibroController {
         List<EntityModel<Libro>> libros = libroService.getLibrosPorAutor(idAutor).stream()
                 .map(libroAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(libros,
-                linkTo(methodOn(LibroController.class).getLibrosByAutor(idAutor)).withSelfRel());
+        return CollectionModel.of(libros);
     }
 
     @PostMapping

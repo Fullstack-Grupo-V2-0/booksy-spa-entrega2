@@ -1,8 +1,5 @@
 package com.example.booksyspa.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,8 +44,7 @@ public class CategoriaController {
         List<EntityModel<Categoria>> categorias = categoriaService.getCategorias().stream()
                 .map(categoriaAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(categorias,
-                linkTo(methodOn(CategoriaController.class).getAllCategorias()).withSelfRel());
+        return CollectionModel.of(categorias);
     }
 
     @GetMapping("/{id}")

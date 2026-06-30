@@ -1,8 +1,5 @@
 package com.example.msusuarios.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,8 +44,7 @@ public class UsuarioController {
         List<EntityModel<Usuario>> usuarios = usuarioService.getUsuarios().stream()
                 .map(assemblers::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(usuarios,
-                linkTo(methodOn(UsuarioController.class).getAllUsuarios()).withSelfRel());
+        return CollectionModel.of(usuarios);
     }
 
     @GetMapping("/{id}")

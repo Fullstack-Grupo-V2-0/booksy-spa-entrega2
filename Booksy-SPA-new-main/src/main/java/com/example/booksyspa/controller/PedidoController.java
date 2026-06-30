@@ -1,8 +1,5 @@
 package com.example.booksyspa.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,8 +45,7 @@ public class PedidoController {
         List<EntityModel<Pedido>> pedidos = pedidoService.getPedidos().stream()
                 .map(pedidoAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(pedidos,
-                linkTo(methodOn(PedidoController.class).getAllPedidos()).withSelfRel());
+        return CollectionModel.of(pedidos);
     }
 
     @GetMapping("/{id}")
@@ -64,8 +60,7 @@ public class PedidoController {
         List<EntityModel<Pedido>> pedidos = pedidoService.getPedidosPorCliente(idCliente).stream()
                 .map(pedidoAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(pedidos,
-                linkTo(methodOn(PedidoController.class).getPedidosByCliente(idCliente)).withSelfRel());
+        return CollectionModel.of(pedidos);
     }
 
     @GetMapping(value = "/libro/{idLibro}")
@@ -74,8 +69,7 @@ public class PedidoController {
         List<EntityModel<Pedido>> pedidos = pedidoService.getPedidosPorLibro(idLibro).stream()
                 .map(pedidoAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(pedidos,
-                linkTo(methodOn(PedidoController.class).getPedidosByLibro(idLibro)).withSelfRel());
+        return CollectionModel.of(pedidos);
     }
 
     @GetMapping(value = "/estado")
@@ -84,8 +78,7 @@ public class PedidoController {
         List<EntityModel<Pedido>> pedidos = pedidoService.getPedidosPorEstado(estado).stream()
                 .map(pedidoAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(pedidos,
-                linkTo(methodOn(PedidoController.class).getPedidosByEstado(estado)).withSelfRel());
+        return CollectionModel.of(pedidos);
     }
 
     @PostMapping
