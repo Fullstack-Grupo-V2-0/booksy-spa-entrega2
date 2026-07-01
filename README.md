@@ -9,6 +9,10 @@ MS Usuarios
 /api/v1/    
 
 
+Links para Swagger:
+http://localhost:8081/swagger-ui/index.html  (Booksy-SPA)
+http://localhost:8082/swagger-ui/index.html  (ms-usuarios)
+
 
 
 Para realizar los testeos, utilizar los siguientes URL y métodos:
