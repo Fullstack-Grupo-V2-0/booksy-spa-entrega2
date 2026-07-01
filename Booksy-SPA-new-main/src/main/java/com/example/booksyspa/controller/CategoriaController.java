@@ -23,7 +23,10 @@ import com.example.booksyspa.service.CategoriaService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+
+@Tag(name = "Categorías", description = "Gestión de categorías de libros")
 @Slf4j
 @RestController
 @RequestMapping("/api/v2/categorias")

@@ -24,7 +24,10 @@ import com.example.booksyspa.service.PedidoService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+
+@Tag(name = "Pedidos", description = "Gestión de pedidos")
 @Slf4j
 @RestController
 @RequestMapping("/api/v2/pedidos")
