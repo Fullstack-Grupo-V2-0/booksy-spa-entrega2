@@ -1,7 +1,7 @@
-com/example/msusuarios/service/UsuarioService.class
-com/example/msusuarios/model/Usuario.class
-com/example/msusuarios/MsUsuariosApplication.class
-com/example/msusuarios/exception/ResourceNotFoundException.class
-com/example/msusuarios/util/ControllerAdvice.class
-com/example/msusuarios/controller/UsuarioController.class
-com/example/msusuarios/repository/UsuarioRepository.class
+com\example\msusuarios\util\ControllerAdvice.class
+com\example\msusuarios\repository\UsuarioRepository.class
+com\example\msusuarios\service\UsuarioService.class
+com\example\msusuarios\MsUsuariosApplication.class
+com\example\msusuarios\exception\ResourceNotFoundException.class
+com\example\msusuarios\model\Usuario.class
+com\example\msusuarios\controller\UsuarioController.class

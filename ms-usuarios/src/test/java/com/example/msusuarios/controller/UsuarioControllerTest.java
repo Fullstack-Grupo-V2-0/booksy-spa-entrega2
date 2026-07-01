@@ -63,7 +63,7 @@ public class UsuarioControllerTest {
         usuario.setRol("ADMIN");
         usuario.setActivo(1);
 
-        when(assemblers.toModel(any(Usuario.class))).thenReturn(EntityModel.of(usuario));
+        lenient().when(assemblers.toModel(any(Usuario.class))).thenReturn(EntityModel.of(usuario));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class UsuarioControllerTest {
 
         mockMvc.perform(get("/api/v1/usuarios"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test

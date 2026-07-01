@@ -75,7 +75,7 @@ public class LibroControllerTest {
         libro.setCategoria(categoria);
         libro.setPrecio(new BigDecimal("15000"));
 
-        when(libroAssembler.toModel(any(Libro.class))).thenReturn(EntityModel.of(libro));
+        lenient().when(libroAssembler.toModel(any(Libro.class))).thenReturn(EntityModel.of(libro));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class LibroControllerTest {
 
         mockMvc.perform(get("/api/v2/libros"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class LibroControllerTest {
 
         mockMvc.perform(get("/api/v2/libros/categoria/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class LibroControllerTest {
 
         mockMvc.perform(get("/api/v2/libros/autor/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test

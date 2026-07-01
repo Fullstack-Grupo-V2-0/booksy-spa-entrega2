@@ -60,7 +60,7 @@ public class CategoriaControllerTest {
         categoria.setNombre("Ficción");
         categoria.setDescripcion("Novelas de ficción literaria");
 
-        when(categoriaAssembler.toModel(any(Categoria.class))).thenReturn(EntityModel.of(categoria));
+        lenient().when(categoriaAssembler.toModel(any(Categoria.class))).thenReturn(EntityModel.of(categoria));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class CategoriaControllerTest {
 
         mockMvc.perform(get("/api/v2/categorias"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test

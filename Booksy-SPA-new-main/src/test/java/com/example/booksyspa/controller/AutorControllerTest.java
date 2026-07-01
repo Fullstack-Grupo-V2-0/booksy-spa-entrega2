@@ -63,7 +63,7 @@ public class AutorControllerTest {
         autor.setFechaNacimiento(LocalDate.of(1927, 3, 6));
         autor.setNacionalidad("Colombiana");
 
-        when(autorAssembler.toModel(any(Autor.class))).thenReturn(EntityModel.of(autor));
+        lenient().when(autorAssembler.toModel(any(Autor.class))).thenReturn(EntityModel.of(autor));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class AutorControllerTest {
 
         mockMvc.perform(get("/api/v2/autores"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test

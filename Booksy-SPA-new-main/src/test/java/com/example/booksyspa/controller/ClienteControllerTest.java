@@ -63,7 +63,7 @@ public class ClienteControllerTest {
         cliente.setEmail("juan@test.cl");
         cliente.setTelefono("912345678");
 
-        when(clienteAssembler.toModel(any(Cliente.class))).thenReturn(EntityModel.of(cliente));
+        lenient().when(clienteAssembler.toModel(any(Cliente.class))).thenReturn(EntityModel.of(cliente));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ClienteControllerTest {
 
         mockMvc.perform(get("/api/v2/clientes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test

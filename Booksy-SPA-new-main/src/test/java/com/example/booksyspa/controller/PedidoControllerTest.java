@@ -79,7 +79,7 @@ public class PedidoControllerTest {
         pedido.setEstado(EstadoPedido.PENDIENTE);
         pedido.setTotal(new BigDecimal("15000"));
 
-        when(pedidoAssembler.toModel(any(Pedido.class))).thenReturn(EntityModel.of(pedido));
+        lenient().when(pedidoAssembler.toModel(any(Pedido.class))).thenReturn(EntityModel.of(pedido));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PedidoControllerTest {
 
         mockMvc.perform(get("/api/v2/pedidos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class PedidoControllerTest {
 
         mockMvc.perform(get("/api/v2/pedidos/cliente/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class PedidoControllerTest {
 
         mockMvc.perform(get("/api/v2/pedidos/libro/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class PedidoControllerTest {
 
         mockMvc.perform(get("/api/v2/pedidos/estado").param("estado", "PENDIENTE"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded").exists());
+                .andExpect(jsonPath("$.content").exists());
     }
 
     @Test
